@@ -19,11 +19,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 32px;
+      padding: 24px;
       text-align: center;
     }
 
     #frase {
+      display: none;
       max-width: 560px;
       font-size: clamp(1.35rem, 5vw, 2rem);
       line-height: 1.6;
@@ -31,16 +32,27 @@
       transition: opacity 0.8s ease;
     }
 
-    #frase.visibile {
-      opacity: 1;
+    #foto {
+      display: none;
+      max-width: 100%;
+      max-height: 88dvh;
+      border-radius: 12px;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .visibile {
+      opacity: 1 !important;
     }
   </style>
 </head>
 <body>
   <p id="frase"></p>
+  <img id="foto" src="" alt="Per te">
 
   <script>
-    // Inserisci qui tutte le tue frasi, una per riga, tra virgolette doppie e separate da una virgola
+    // 1. Le tue frasi (ricorda sempre virgolette doppie e virgola finale)
     const frasi = [
       "Sei la parte migliore della mia giornata.",
       "Anche oggi mi fai sorridere senza fare niente.",
@@ -48,27 +60,49 @@
       "Ricordati che sei incredibile, anche nei giorni no.",
       "Non vedo l'ora di rivederti.",
       "TI AMO MILLE.",
+      "MILLE BASIII.",
     ];
 
-    function mostraFraseCasuale() {
-      const elemento = document.getElementById("frase");
-      const ultimoIndice = Number(localStorage.getItem("ultimaFrase"));
+    // 2. I nomi esatti delle foto caricate su GitHub
+    const foto = [
+      "foto1.jpg",
+      "foto2.jpg",
+      "foto3.jpg",
+    ];
+
+    function scegliIndiceCasuale(lunghezza, chiaveStorage) {
+      const ultimo = Number(localStorage.getItem(chiaveStorage));
       let indice;
-
-      // Evita che esca la stessa frase due volte di fila
       do {
-        indice = Math.floor(Math.random() * frasi.length);
-      } while (frasi.length > 1 && indice === ultimoIndice);
-
-      localStorage.setItem("ultimaFrase", indice);
-      elemento.textContent = frasi[indice];
-
-      requestAnimationFrame(() => {
-        elemento.classList.add("visibile");
-      });
+        indice = Math.floor(Math.random() * lunghezza);
+      } while (lunghezza > 1 && indice === ultimo);
+      localStorage.setItem(chiaveStorage, indice);
+      return indice;
     }
 
-    mostraFraseCasuale();
+    function mostraContenutoAlternato() {
+      const ultimoTipo = localStorage.getItem("ultimoTipo");
+
+      // Se l'ultima volta è uscita una frase (e ci sono foto disponibili), mostra una foto
+      if (ultimoTipo === "frase" && foto.length > 0) {
+        const img = document.getElementById("foto");
+        const indice = scegliIndiceCasuale(foto.length, "ultimaFoto");
+        img.src = foto[indice];
+        img.style.display = "block";
+        img.onload = () => img.classList.add("visibile");
+        localStorage.setItem("ultimoTipo", "foto");
+      } else {
+        // Altrimenti (inclusa la primissima apertura) mostra una frase
+        const testo = document.getElementById("frase");
+        const indice = scegliIndiceCasuale(frasi.length, "ultimaFrase");
+        testo.textContent = frasi[indice];
+        testo.style.display = "block";
+        requestAnimationFrame(() => testo.classList.add("visibile"));
+        localStorage.setItem("ultimoTipo", "frase");
+      }
+    }
+
+    mostraContenutoAlternato();
   </script>
 </body>
 </html>
