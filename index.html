@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Per te</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #1f1f1f;
+      font-family: "Georgia", "Times New Roman", serif;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      text-align: center;
+    }
+
+    #frase {
+      max-width: 560px;
+      font-size: clamp(1.35rem, 5vw, 2rem);
+      line-height: 1.6;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    #frase.visibile {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <p id="frase"></p>
+
+  <script>
+    // Inserisci qui tutte le tue frasi, una per riga, tra virgolette doppie e separate da una virgola
+    const frasi = [
+      "Sei la parte migliore della mia giornata.",
+      "Anche oggi mi fai sorridere senza fare niente.",
+      "Grazie perché con te tutto è più leggero.",
+      "Ricordati che sei incredibile, anche nei giorni no.",
+      "Non vedo l'ora di rivederti."
+      "TI AMO MILLE."
+    ];
+
+    function mostraFraseCasuale() {
+      const elemento = document.getElementById("frase");
+      const ultimoIndice = Number(localStorage.getItem("ultimaFrase"));
+      let indice;
+
+      // Evita che esca la stessa frase due volte di fila
+      do {
+        indice = Math.floor(Math.random() * frasi.length);
+      } while (frasi.length > 1 && indice === ultimoIndice);
+
+      localStorage.setItem("ultimaFrase", indice);
+      elemento.textContent = frasi[indice];
+
+      requestAnimationFrame(() => {
+        elemento.classList.add("visibile");
+      });
+    }
+
+    mostraFraseCasuale();
+  </script>
+</body>
+</html>
